@@ -35,52 +35,32 @@ Because ESFT relies on real-world measurements rather than invisible constants, 
 * **3D Flux Visualizers:** Integration with Three.js or WebGL for rendering interactive, real-time 3D models of spacetime coherence and flux patches.
 * **Hardware-in-the-Loop (HIL) Testing:** Real-time data streaming directly from drone flight controllers (e.g., ArduPilot/Pixhawk) into the ESFT topology engine during active flight.
 
-## ⚙️ 5. Computer Simulations: Code & Structure
-The simulation core is designed to model localized flux densities. Below is a foundational example of how the topology engine generates a simulated flux grid.
+## 🚀 Deployment & Setup
 
-```python
-# src/simulations/flux_grid_sim.py
-import numpy as np
+This architecture requires unrestricted local model processing and hardware-level USB access for SDR tools. It is designed to run via Native Windows (PowerShell) or Windows Subsystem for Linux (WSL2).
 
-class FluxGrid:
-    def __init__(self, size, base_coherence=1.0):
-        self.size = size
-        # Initialize a 2D grid representing a cross-section of emergent spacetime
-        self.grid = np.full((size, size), base_coherence)
-        
-    def apply_mass_anomaly(self, x, y, mass, radius):
-        """Simulates how mass alters the underlying flux density, replacing standard gravity."""
-        for i in range(self.size):
-            for j in range(self.size):
-                distance = np.sqrt((i - x)**2 + (j - y)**2)
-                if distance < radius:
-                    # Flux density increases closer to the mass center
-                    effect = mass / (distance + 1)
-                    self.grid[i, j] += effect
+**1. Clone the repository:**
+```powershell
+git clone [https://github.com/yourusername/esft-core.git](https://github.com/yourusername/esft-core.git)
+cd esft-core
+```
 
-    def get_flux_variance(self):
-        """Calculates areas of high variance (potential ESFT anomaly zones)."""
-        return np.var(self.grid)
+**2. Configure the Local Environment:**
+To establish local directories, Python virtual environments, and offline storage limits, execute the setup script.
 
-# Run a basic simulation
-sim = FluxGrid(size=100)
-sim.apply_mass_anomaly(x=50, y=50, mass=10.5, radius=20)
-print(f"Overall System Flux Variance: {sim.get_flux_variance()}")
+*For Native Windows:*
+```powershell
+.\src\local_environment.ps1
+```
+*For WSL2 / Linux:*
+```bash
+bash src/local_environment.sh
+```
 
+**3. Initialize the Offline AI Orchestrator:**
+Ensure the [Ollama Windows App](https://ollama.com/download/windows) (or your WSL instance) is running in the background. Build the custom analytical agent using the ESFT framework instructions:
+```powershell
+ollama create esft-analyst -f orchestration/Modelfile
+```
 
-esft-core/
-├── docs/
-│   ├── theory/                    # Whitepapers explaining the ESFT framework
-│   └── experiments/               # Methodologies for UAS mapping and RF auditing
-├── src/
-│   ├── topology_engine/           # Core ESFT mathematics (tensor operations)
-│   ├── simulations/               # Python-based flux models (like the code above)
-│   └── local_environment.sh       # Native Linux deployment script
-├── telemetry/
-│   ├── uas_ingestion/             # Flight log parsers (Pixhawk/ArduPilot)
-│   └── rf_capture/                # SDR/HackRF spectrum analysis scripts
-├── orchestration/
-│   ├── Modelfile                  # Custom instructions for the local Ollama ESFT analyst
-│   └── pipeline.py                # Connects telemetry data to the local LLM
-├── requirements.txt
-└── README.md
+**Note on Hardware Telemetry:** If executing on Windows and using HackRF/SDR auditing tools, it is highly recommended to run the telemetry modules via WSL2 using `usbipd-win` to ensure native USB passthrough for frequency captures.
