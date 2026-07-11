@@ -37,30 +37,38 @@ Because ESFT relies on real-world measurements rather than invisible constants, 
 
 ## 🚀 Deployment & Setup
 
-This architecture requires unrestricted local model processing and hardware-level USB access for SDR tools. It is designed to run via Native Windows (PowerShell) or Windows Subsystem for Linux (WSL2).
+This framework utilizes a hybrid architecture for Windows hosts. It provides Native Windows execution for core topology mathematics and AI orchestration, alongside a WSL2 subsystem pathway for direct hardware-level SDR (Software-Defined Radio) telemetry ingestion.
 
 **1. Clone the repository:**
-```powershell
+```bash
 git clone [https://github.com/yourusername/esft-core.git](https://github.com/yourusername/esft-core.git)
 cd esft-core
 ```
 
-**2. Configure the Local Environment:**
-To establish local directories, Python virtual environments, and offline storage limits, execute the setup script.
+**2. Configure the Native Environment (Choose Your Path):**
 
-*For Native Windows:*
+*Path A: Native Windows (For Math, AI Orchestration, and UAS Flight Logs)*
+Execute the PowerShell script to establish local directories, virtual environments, and offline storage partitioning.
 ```powershell
 .\src\local_environment.ps1
 ```
-*For WSL2 / Linux:*
+
+*Path B: WSL2 (Required for HackRF / SDR Hardware Ingestion)*
+Execute the bash script within your WSL2 (Ubuntu/Kali) terminal to deploy Linux-native dependencies for signal processing.
 ```bash
 bash src/local_environment.sh
 ```
 
-**3. Initialize the Offline AI Orchestrator:**
-Ensure the [Ollama Windows App](https://ollama.com/download/windows) (or your WSL instance) is running in the background. Build the custom analytical agent using the ESFT framework instructions:
-```powershell
+**3. Hardware Ingestion: Bind SDR to WSL2**
+To capture raw electromagnetic anomalies via SDR on Windows, you must pass the USB hardware directly into the Linux subsystem using `usbipd-win`.
+Open a Windows PowerShell administrator prompt:
+1. List attached devices: `usbipd wsl list`
+2. Note the BUSID of your HackRF/SDR.
+3. Bind and attach the device: `usbipd wsl attach --busid <BUSID>`
+*(The SDR is now natively accessible to the ESFT `/telemetry` parsers inside WSL).*
+
+**4. Initialize the Offline Orchestrator:**
+Ensure the [Ollama local runner](https://ollama.com/) is active. Build the custom analytical agent:
+```bash
 ollama create esft-analyst -f orchestration/Modelfile
 ```
-
-**Note on Hardware Telemetry:** If executing on Windows and using HackRF/SDR auditing tools, it is highly recommended to run the telemetry modules via WSL2 using `usbipd-win` to ensure native USB passthrough for frequency captures.
