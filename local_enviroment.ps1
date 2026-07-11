@@ -1,26 +1,27 @@
 # src/local_environment.ps1
-Write-Host "Initializing ESFT Core Local Environment on Windows..." -ForegroundColor Cyan
+Write-Host "Initializing ESFT Core Native Windows Environment..." -ForegroundColor Cyan
 
-# Check if Python is installed
 if (-not (Get-Command "python" -ErrorAction SilentlyContinue)) {
-    Write-Host "Error: Python is not installed or not in PATH." -ForegroundColor Red
+    Write-Host "[!] Python is not installed or not in PATH. Aborting." -ForegroundColor Red
     exit
 }
 
-# Create a Python Virtual Environment to keep dependencies isolated
-Write-Host "Building isolated Python virtual environment..."
+Write-Host "[+] Building isolated Python virtual environment (esft_env)..."
 python -m venv esft_env
 
-# Activate the environment and install dependencies
-Write-Host "Activating environment and installing required packages..."
+Write-Host "[+] Activating environment and installing core dependencies..."
 .\esft_env\Scripts\activate
 pip install -r requirements.txt
 
-# Create necessary local directories for offline data ingestion
-Write-Host "Structuring offline data directories..."
-New-Item -ItemType Directory -Force -Path ".\telemetry\uas_ingestion\raw_logs"
-New-Item -ItemType Directory -Force -Path ".\telemetry\rf_capture\raw_sweeps"
-New-Item -ItemType Directory -Force -Path ".\orchestration\local_db"
+Write-Host "[+] Structuring offline data directories..."
+$dirs = @(
+    ".\telemetry\uas_ingestion\raw_logs",
+    ".\telemetry\uas_ingestion\parsed_grids",
+    ".\telemetry\rf_capture\raw_sweeps",
+    ".\orchestration\local_db"
+)
+foreach ($dir in $dirs) {
+    New-Item -ItemType Directory -Force -Path $dir | Out-Null
+}
 
-Write-Host "ESFT Environment successfully deployed." -ForegroundColor Green
-Write-Host "To begin work, always activate your environment first: .\esft_env\Scripts\activate" -ForegroundColor Yellow
+Write-Host "ESFT Windows Environment successfully deployed." -ForegroundColor Green
