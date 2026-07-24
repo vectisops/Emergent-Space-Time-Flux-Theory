@@ -1,3 +1,10 @@
+```
+  ┌──────────────────┐
+  │ ▓▓    E S F T    │
+  │  flux · theory   │
+  └──────────────────┘
+```
+
 # Emergent Spacetime Flux Theory (ESFT)
 
 **Independent research exploring a different idea about how the universe expands and forms structure.**
